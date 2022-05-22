@@ -3,53 +3,53 @@ import numpy as np
 from tfRecordTools import *
 from dataLoader import *
 
-def createBertEmbeddingExample(word_vector, record_id, dataset, encoder, preprocessor):
+def createBertEmbeddingExample(wordVector, recordID, reverseWordIndex, encoder, preprocessor):
     """
     Create tf.Example containing the sample's embedding and its ID.
     
     Args:
-        word_vector - (np.ndarray) the text to decode
-        record_id - (int) ID of the sample
-        dataset - (keras.dataset) dataset name
+        wordVector - (np.ndarray) the text to decode
+        recordId - (int) ID of the sample
+        reverseWordIndex - (dict) The reverse word index to use
         encoder - (string) encoder name
         preprocessor - (string) preprocessor name
     Returns:
         example - (tf.Example) tf.Example containing the sample's embedding and its ID
     """
 
-    text = decode_review(word_vector, dataset)
+    text = decodeReview(wordVector, reverseWordIndex)
 
     # Shape = [batch_size,].
-    sentence_embedding = encoder(preprocessor(tf.reshape(text, shape=[-1, ])))['pooled_output']
+    sentenceEmbedding = encoder(preprocessor(tf.reshape(text, shape=[-1, ])))['pooled_output']
     
     # Flatten the sentence embedding back to 1-D.
-    sentence_embedding = tf.reshape(sentence_embedding, shape=[-1])
+    sentenceEmbedding = tf.reshape(sentenceEmbedding, shape=[-1])
     
     features = {
-        'id': _bytes_feature(str(record_id)),
-        'embedding': _float_feature(sentence_embedding.numpy())
+        'id': bytesFeature(str(recordID)),
+        'embedding': floatFeature(sentenceEmbedding.numpy())
     }
     return tf.train.Example(features=tf.train.Features(feature=features))
 
 
-def createBertEmbedding(word_vectors, output_path, starting_record_id, dataset, encoder, preprocessor):
+def createBertEmbedding(wordVectors, outputPath, startingRecordId, reverseWordIndex, encoder, preprocessor):
     """
     Create full set of BERT embeddings
 
     Args:
-        word_vectors - (np.ndarray) all text to decode
-        output_path - (string) path to output file
-        starting_record_id - (int) ID of the first sample
-        dataset - (keras.dataset) dataset name
+        wordVectors - (np.ndarray) all text to decode
+        outputPath - (string) path to output file
+        startingRecordId - (int) ID of the first sample
+        reverseWordIndex - (dict) The reverse word index to use
         encoder - (string) encoder name
         preprocessor - (string) preprocessor name
     Returns:
-        record_id - (int) ID of the last sample
+        recordID - (int) ID of the last sample
     """
-    record_id = int(starting_record_id)
-    with tf.io.TFRecordWriter(output_path) as writer:
-        for word_vector in word_vectors:
-            example = createBertEmbeddingExample(word_vector, record_id, dataset, encoder, preprocessor)
-            record_id = record_id + 1
+    recordID = int(startingRecordId)
+    with tf.io.TFRecordWriter(outputPath) as writer:
+        for word_vector in wordVectors:
+            example = createBertEmbeddingExample(word_vector, recordID, reverseWordIndex, encoder, preprocessor)
+            recordID = recordID + 1
             writer.write(example.SerializeToString())
-    return record_id
+    return recordID

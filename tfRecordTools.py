@@ -3,7 +3,7 @@ import numpy as np
 from tensorflow import keras
 
 
-def _int64_feature(value):
+def int64Feature(value):
     """
     Returns int64 tf.train.Feature.
 
@@ -13,7 +13,7 @@ def _int64_feature(value):
     return tf.train.Feature(int64_list=tf.train.Int64List(value=value.tolist()))
 
 
-def _bytes_feature(value):
+def bytesFeature(value):
     """
     Returns bytes tf.train.Feature.
 
@@ -24,7 +24,7 @@ def _bytes_feature(value):
         bytes_list=tf.train.BytesList(value=[value.encode('utf-8')]))
 
 
-def _float_feature(value):
+def floatFeature(value):
     """
     Returns float tf.train.Feature.
 

@@ -1,6 +1,6 @@
 import tensorflow as tf
 import numpy as np
-import neural_strcutured_learning as nsl
+import neural_structured_learning as nsl
 from tfRecordTools import *
 from dataLoader import *
 from bertEmbeddings import *
