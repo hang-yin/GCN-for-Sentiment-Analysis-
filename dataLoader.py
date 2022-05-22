@@ -17,7 +17,13 @@ def sampleFunction(inputFeature):
 
 def build_reverse_word_index(dataset):
     """
-    A dictionary mapping words to an integer index
+    Convert the index back to words with proper accounting for 
+    the special characters reserved at the beginning of the dictionary
+
+    Args: 
+        dataset - (keras.dataset) The dataset to use
+    Returns:
+        reverse_word_index - (dict) A dictionary mapping words to an integer index
     """
     word_index = dataset.get_word_index()
 
@@ -29,9 +35,14 @@ def build_reverse_word_index(dataset):
     word_index['<UNUSED>'] = 3
     return dict((value, key) for (key, value) in word_index.items())
 
-# Convert the index back to words with proper accounting for 
-# the special characters reserved at the beginning of the dictionary
-# reverse_word_index = build_reverse_word_index(imdb)
-
 def decode_review(text, dataset):
+    """
+    Uses build_reverse_word_index to decode original data format into text
+    
+    Args:
+        text - (np.ndarray) The text to decode
+        dataset - (keras.dataset) The dataset to use
+    Returns:
+        decoded_review - (string) The decoded review
+    """
     return ' '.join([build_reverse_word_index(dataset).get(i, '?') for i in text])

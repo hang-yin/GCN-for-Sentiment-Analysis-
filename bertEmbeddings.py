@@ -7,7 +7,14 @@ def createBertEmbeddingExample(word_vector, record_id, dataset, encoder, preproc
     """
     Create tf.Example containing the sample's embedding and its ID.
     
-    
+    Args:
+        word_vector - (np.ndarray) the text to decode
+        record_id - (int) ID of the sample
+        dataset - (keras.dataset) dataset name
+        encoder - (string) encoder name
+        preprocessor - (string) preprocessor name
+    Returns:
+        example - (tf.Example) tf.Example containing the sample's embedding and its ID
     """
 
     text = decode_review(word_vector, dataset)
@@ -26,6 +33,19 @@ def createBertEmbeddingExample(word_vector, record_id, dataset, encoder, preproc
 
 
 def createBertEmbedding(word_vectors, output_path, starting_record_id, dataset, encoder, preprocessor):
+    """
+    Create full set of BERT embeddings
+
+    Args:
+        word_vectors - (np.ndarray) all text to decode
+        output_path - (string) path to output file
+        starting_record_id - (int) ID of the first sample
+        dataset - (keras.dataset) dataset name
+        encoder - (string) encoder name
+        preprocessor - (string) preprocessor name
+    Returns:
+        record_id - (int) ID of the last sample
+    """
     record_id = int(starting_record_id)
     with tf.io.TFRecordWriter(output_path) as writer:
         for word_vector in word_vectors:

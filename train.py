@@ -32,6 +32,13 @@ class HParams(object):
 def create_example(word_vector, label, record_id):
     """
     Create tf.Example containing the sample's word vector, label, and ID.
+
+    Args:
+        word_vector: A `tf.Tensor` containing the word vector.
+        label: A `tf.Tensor` containing the label.
+        record_id: A `tf.Tensor` containing the record ID.
+    Returns:
+        An instance of `tf.train.Example`.
     """
     features = {
         'id': _bytes_feature(str(record_id)),
@@ -42,6 +49,17 @@ def create_example(word_vector, label, record_id):
 
 
 def create_records(word_vectors, labels, record_path, starting_record_id):
+    """
+    Creates tf.Record files containing the word vectors and labels.
+    
+    Args:
+        word_vectors: A `np.array` containing the word vectors.
+        labels: A `np.array` containing the labels.
+        record_path: The path to the tf.Record file to be created.
+        starting_record_id: The ID of the first sample.
+    Returns:
+        The ID of the last sample.
+    """
     record_id = int(starting_record_id)
     with tf.io.TFRecordWriter(record_path) as writer:
         for word_vector, label in zip(word_vectors, labels):
