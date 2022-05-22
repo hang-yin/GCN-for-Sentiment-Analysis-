@@ -5,7 +5,7 @@ from dataLoader import *
 from bertEmbeddings import *
 from train import *
 
-def make_feed_forward_model(HPARAMS):
+def makeFeedForwardModel(HPARAMS):
     """
     Builds a simple 2 layer feed forward neural network.
     """
@@ -23,7 +23,7 @@ def make_feed_forward_model(HPARAMS):
     return tf.keras.Model(inputs=inputs, outputs=outputs)
 
 
-def make_bilstm_model(HPARAMS):
+def makeBilstmModel(HPARAMS):
     """
     Builds a bi-directional LSTM model.
     """

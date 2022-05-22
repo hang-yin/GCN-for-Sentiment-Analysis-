@@ -29,50 +29,50 @@ class HParams(object):
         # eval parameters
         self.eval_steps = None  # All instances in the test set are evaluated.
 
-def create_example(word_vector, label, record_id):
+def createExample(wordVector, label, recordID):
     """
     Create tf.Example containing the sample's word vector, label, and ID.
 
     Args:
-        word_vector: A `tf.Tensor` containing the word vector.
+        wordVector: A `tf.Tensor` containing the word vector.
         label: A `tf.Tensor` containing the label.
-        record_id: A `tf.Tensor` containing the record ID.
+        recordId: A `tf.Tensor` containing the record ID.
     Returns:
         An instance of `tf.train.Example`.
     """
     features = {
-        'id': _bytes_feature(str(record_id)),
-        'words': _int64_feature(np.asarray(word_vector)),
-        'label': _int64_feature(np.asarray([label])),
+        'id': bytesFeature(str(recordID)),
+        'words': int64Feature(np.asarray(wordVector)),
+        'label': int64Feature(np.asarray([label])),
     }
     return tf.train.Example(features=tf.train.Features(feature=features))
 
 
-def create_records(word_vectors, labels, record_path, starting_record_id):
+def createRecords(wordVectors, labels, recordPath, startingRecordId):
     """
     Creates tf.Record files containing the word vectors and labels.
     
     Args:
-        word_vectors: A `np.array` containing the word vectors.
+        wordVectors: A `np.array` containing the word vectors.
         labels: A `np.array` containing the labels.
-        record_path: The path to the tf.Record file to be created.
-        starting_record_id: The ID of the first sample.
+        recordPath: The path to the tf.Record file to be created.
+        startingRecordId: The ID of the first sample.
     Returns:
         The ID of the last sample.
     """
-    record_id = int(starting_record_id)
-    with tf.io.TFRecordWriter(record_path) as writer:
-        for word_vector, label in zip(word_vectors, labels):
-            example = create_example(word_vector, label, record_id)
-            record_id = record_id + 1
+    recordID = int(startingRecordId)
+    with tf.io.TFRecordWriter(recordPath) as writer:
+        for word_vector, label in zip(wordVectors, labels):
+            example = createExample(word_vector, label, recordID)
+            recordID = recordID + 1
             writer.write(example.SerializeToString())
-    return record_id
+    return recordID
 
 
 
 # Data must be converted from integer to tensors before input
 # Create an "max_length x num_reviews" matrix containing integers for the reviews
-def make_dataset(file_path, HPARAMS, NBR_FEATURE_PREFIX, NBR_WEIGHT_SUFFIX, training=False):
+def makeDataset(filePath, HPARAMS, NBR_FEATURE_PREFIX, NBR_WEIGHT_SUFFIX, training=False):
   """Creates a `tf.data.TFRecordDataset`.
 
   Args:
@@ -85,22 +85,22 @@ def make_dataset(file_path, HPARAMS, NBR_FEATURE_PREFIX, NBR_WEIGHT_SUFFIX, trai
     objects.
   """
 
-  def pad_sequence(sequence, max_seq_length):
+  def padSequence(sequence, maxSeqLength):
     """Pads the input sequence (a `tf.SparseTensor`) to `max_seq_length`."""
-    pad_size = tf.maximum([0], max_seq_length - tf.shape(sequence)[0])
+    pad_size = tf.maximum([0], maxSeqLength - tf.shape(sequence)[0])
     padded = tf.concat(
         [sequence.values,
          tf.fill((pad_size), tf.cast(0, sequence.dtype))],
         axis=0)
     # The input sequence may be larger than max_seq_length. Truncate down if
     # necessary.
-    return tf.slice(padded, [0], [max_seq_length])
+    return tf.slice(padded, [0], [maxSeqLength])
 
-  def parse_example(example_proto):
+  def parseExample(exampleProto):
     """Extracts relevant fields from the `example_proto`.
 
     Args:
-      example_proto: An instance of `tf.train.Example`.
+      exampleProto: An instance of `tf.train.Example`.
 
     Returns:
       A pair whose first value is a dictionary containing relevant features
@@ -126,23 +126,23 @@ def make_dataset(file_path, HPARAMS, NBR_FEATURE_PREFIX, NBR_WEIGHT_SUFFIX, trai
         feature_spec[nbr_weight_key] = tf.io.FixedLenFeature(
             [1], tf.float32, default_value=tf.constant([0.0]))
 
-    features = tf.io.parse_single_example(example_proto, feature_spec)
+    features = tf.io.parse_single_example(exampleProto, feature_spec)
 
     # Since the 'words' feature is a variable length word vector, we pad it to a
     # constant maximum length based on HPARAMS.max_seq_length
-    features['words'] = pad_sequence(features['words'], HPARAMS.max_seq_length)
+    features['words'] = padSequence(features['words'], HPARAMS.max_seq_length)
     if training:
       for i in range(HPARAMS.num_neighbors):
         nbr_feature_key = '{}{}_{}'.format(NBR_FEATURE_PREFIX, i, 'words')
-        features[nbr_feature_key] = pad_sequence(features[nbr_feature_key],
+        features[nbr_feature_key] = padSequence(features[nbr_feature_key],
                                                  HPARAMS.max_seq_length)
 
     labels = features.pop('label')
     return features, labels
 
-  dataset = tf.data.TFRecordDataset([file_path])
+  dataset = tf.data.TFRecordDataset([filePath])
   if training:
     dataset = dataset.shuffle(10000)
-  dataset = dataset.map(parse_example)
+  dataset = dataset.map(parseExample)
   dataset = dataset.batch(HPARAMS.batch_size)
   return dataset
