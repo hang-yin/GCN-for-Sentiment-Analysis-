@@ -37,6 +37,23 @@ def convertToEmbedding(words, preprocessor, encoder):
     return convertedWords
 
 
+def convertToCustomEmbedding(words, preprocessor, encoder):
+    """
+    Don't Use This Function, use the function in the DependencyParsing.ipynb
+    Takes a list of words and converts it to a list of custom embeddings. 
+
+    Args:
+        words - (list) The list of words to convert
+        preprocessor - (tensorflow_hub.keras_layer.KerasLayer) The preprocessor needed to process a string to tokens
+        encoder - (tensorflow_hub.keras_layer.KerasLayer) The encoder needed to convert the tokens to embeddings
+    Returns:
+        embeddings - (list) A list of embeddings
+    """
+    
+    convertedWords = np.array(
+        encoder(preprocessor(words)['input_word_ids'])[:, 1:2, :])
+    return convertedWords.reshape((convertedWords.shape[0], convertedWords.shape[2]))
+
 def tokenRelationHead(sent_dict):
     """
     Prints the token - relation - head chart
