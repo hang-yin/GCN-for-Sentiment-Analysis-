@@ -98,7 +98,7 @@ def drawDepGraph(nodeList, edgeList):
     plt.show()
 
 
-def getNodeEdgeLists(doc):
+def getNodeEdgeLists(doc, sentiment=True, limit=True):
     """
     Parses all the edges in sent_dict and extracts the edges, node labels, and edge labels.
     Args:
@@ -110,12 +110,19 @@ def getNodeEdgeLists(doc):
     edgeList = []
     nodeList = []
     modifier = 0 
-    wordLimit = 50
-    maxSentences = 3
+    if limit:
+        wordLimit = 50
+        maxSentences = 3
+    else:
+        wordLimit = 1000
+        maxSentences = 100
     sentences = []
-    for sentence in doc.sentences:
-        if sentence.sentiment != 1:
-            sentences.append(sentence)
+    
+    # to use the sentence sentiment information
+    if sentiment:
+        for sentence in doc.sentences:
+            if sentence.sentiment != 1:
+                sentences.append(sentence)
     if len(sentences) > 0:
         sentences = sentences[0:maxSentences]
     else:
@@ -135,6 +142,7 @@ def getNodeEdgeLists(doc):
             #             "edgeLabel" : edgeLabel
             #         }
             #     )
+
             if (node['head'] != modifier and node['head'] <= modifier + wordLimit):
                 # the first is the head and the second is dependent
                 edgePair = (node['head'], node['id'])
