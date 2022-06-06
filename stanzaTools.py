@@ -156,3 +156,16 @@ def getNodeEdgeLists(doc, sentiment=True, limit=True):
         modifier += len(sentence.to_dict()[0:wordLimit])
 
     return nodeList, edgeList
+
+def printSpareTensor(st):
+    """
+    Returns a string showing the contents of the sparsetensor.
+    Args:
+        st - (tf.sparse.SparseTensor) the sparse tensor you want to display
+    Returns:
+        s - (string) The string containing the contents of the sparse tensor
+    """
+    s = "<SparseTensor shape=%s \n values={" % (st.dense_shape.numpy().tolist(),)
+    for (index, value) in zip(st.indices, st.values):
+        s += f"\n  %s: %s" % (index.numpy().tolist(), value.numpy().tolist())
+    return s + "}>"
