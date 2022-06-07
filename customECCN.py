@@ -7,6 +7,8 @@ from tensorflow.keras.layers import Dense
 from spektral.layers import ops
 from spektral.layers.convolutional.conv import Conv
 from spektral.layers.ops import modes
+from tensorflow.keras.layers import BatchNormalization, Dropout, PReLU
+
 
 
 class ECCConv(Conv):
@@ -135,6 +137,7 @@ class ECCConv(Conv):
                 regularizer=self.bias_regularizer,
                 constraint=self.bias_constraint,
             )
+        self.batch_norm = BatchNormalization()
         self.built = True
 
     def call(self, inputs, mask=None):
@@ -181,6 +184,7 @@ class ECCConv(Conv):
             output = K.bias_add(output, self.bias)
         if mask is not None:
             output *= mask[0]
+        output = self.batch_norm(output)
         output = self.activation(output)
 
         return output
