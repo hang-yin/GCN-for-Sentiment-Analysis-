@@ -165,7 +165,9 @@ def printSpareTensor(st):
     Returns:
         s - (string) The string containing the contents of the sparse tensor
     """
+    i = 0
     s = "<SparseTensor shape=%s \n values={" % (st.dense_shape.numpy().tolist(),)
     for (index, value) in zip(st.indices, st.values):
         s += f"\n  %s: %s" % (index.numpy().tolist(), value.numpy().tolist())
-    return s + "}>"
+        i += 1
+    return (s + "}>", i)
