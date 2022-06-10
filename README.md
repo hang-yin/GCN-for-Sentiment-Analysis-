@@ -1,7 +1,7 @@
 # CS397 Spring 2022
 This final project explores combining dependency parsing with pre-trained language embedding models using edge-conditioned graph convolution networks.
 
-By: Joey Yang, Hang Ying, Renzhi Hao, and Junhao Xu
+By: Joey Yang, Hang Yin, Renzhi Hao, and Junhao Xu
 
 For our proposed dependency parsing approach, read:
 * DependencyParsing.ipynb
