@@ -1,5 +1,4 @@
-# CS397Project
-CS397 Spring 2022
+# CS397 Spring 2022
 This final project explores combining dependency parsing with pre-trained language embedding models using edge-conditioned graph convolution networks.
 
 By: Joey Yang, Hang Ying, Renzhi Hao, and Junhao Xu
@@ -17,5 +16,5 @@ Edge-Conditioned GCN (87.36) outperforms baselines. However, one-hot encoding of
 
 
 ### Conclusion:
-We demonstrated that it is possible to perform sentiment classification while integrating syntactical and semantic information in a symbolic way. However, the task of learning and integrating the representations of dependency relation types is still unsolved.
+We demonstrated that it is possible to perform sentiment classification while integrating syntactical and semantic information in a graphical way. However, the task of learning and integrating the representations of dependency relation types is still unsolved.
 
