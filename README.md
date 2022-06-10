@@ -3,6 +3,15 @@ This final project explores combining dependency parsing with pre-trained langua
 
 By: Joey Yang, Hang Ying, Renzhi Hao, and Junhao Xu
 
+For our proposed dependency parsing approach, read:
+* DependencyParsing.ipynb
+
+For BERT baseline and sentence-level GCN, read:
+* FinalBaselinesFeedForward.ipynb
+* FinalBaselinesLSTM.ipynb
+* FinalBertCnn.ipynb
+* FinalSentenceGCN.ipynb
+
 ## Abstract:
 
 ### Purpose:
